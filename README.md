@@ -45,9 +45,8 @@ sed -i -e "s#persistent_peers = .*#persistent_peers = \"$PEERS\"#" -e "s#seeds =
 
 **download genesis and addrbook**
 ```
-wget -O $HOME/.mineplex-chain/config/genesis.json https://server-5.itrocket.net/testnet/crossfi/genesis.json
-wget -O $HOME/.mineplex-chain/config/addrbook.json  https://server-5.itrocket.net/testnet/crossfi/addrbook.json
-
+curl -Ls https://raw.githubusercontent.com/Apollo-Sync/Crossfi/main/addrbook.json
+curl -Ls https://raw.githubusercontent.com/Apollo-Sync/Crossfi/main/genesis.json
 ```
 
 **set seeds and peers**
