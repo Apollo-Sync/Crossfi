@@ -77,17 +77,21 @@ s%:26656%:${CROSSFI_PORT}656%g;
 s%^external_address = \"\"%external_address = \"$(wget -qO- eth0.me):${CROSSFI_PORT}656\"%;
 s%:26660%:${CROSSFI_PORT}660%g" $HOME/.mineplex-chain/config/config.toml
 ```
-# config pruning
+**config pruning**
+```
 sed -i -e "s/^pruning *=.*/pruning = \"custom\"/" $HOME/.mineplex-chain/config/app.toml
 sed -i -e "s/^pruning-keep-recent *=.*/pruning-keep-recent = \"100\"/" $HOME/.mineplex-chain/config/app.toml
 sed -i -e "s/^pruning-interval *=.*/pruning-interval = \"50\"/" $HOME/.mineplex-chain/config/app.toml
+```
 
-# set minimum gas price, enable prometheus and disable indexing
+**set minimum gas price, enable prometheus and disable indexing**
+```
 sed -i 's|minimum-gas-prices =.*|minimum-gas-prices = "10000000000000mpx"|g' $HOME/.mineplex-chain/config/app.toml
 sed -i -e "s/prometheus = false/prometheus = true/" $HOME/.mineplex-chain/config/config.toml
 sed -i -e "s/^indexer *=.*/indexer = \"null\"/" $HOME/.mineplex-chain/config/config.toml
-
-# create service file
+```
+**create service file**
+```
 sudo tee /etc/systemd/system/crossfid.service > /dev/null <<EOF
 [Unit]
 Description=Crossfi node
@@ -102,16 +106,20 @@ LimitNOFILE=65535
 [Install]
 WantedBy=multi-user.target
 EOF
-
-# reset and download snapshot
+```
+**reset and download snapshot**
+```
 crossfid tendermint unsafe-reset-all --home $HOME/.mineplex-chain
 if curl -s --head curl https://server-5.itrocket.net/testnet/crossfi/crossfi_2024-07-26_4327885_snap.tar.lz4 | head -n 1 | grep "200" > /dev/null; then
   curl https://server-5.itrocket.net/testnet/crossfi/crossfi_2024-07-26_4327885_snap.tar.lz4 | lz4 -dc - | tar -xf - -C $HOME/.mineplex-chain
     else
   echo "no snapshot founded"
 fi
+```
 
-# enable and start service
+**enable and start service**
+```
 sudo systemctl daemon-reload
 sudo systemctl enable crossfid
 sudo systemctl restart crossfid && sudo journalctl -u crossfid -f
+```
